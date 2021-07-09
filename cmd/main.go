@@ -11,8 +11,9 @@ import (
 func main() {
 	// Commands
 	//   - update - Refresh known package versions
-	//   - upgrade - Upgrades packages
+	//   - upgrade - Upgrade packages
 	//   - install - Install new packages
+	//   - remove - Uninstall specified packages
 
 	if len(os.Args) < 2 {
 		fmt.Println("expected at least 2 arguments")
