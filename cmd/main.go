@@ -25,14 +25,17 @@ func main() {
 		if err := myaurhelper.Update(); err != nil {
 			fmt.Printf("Update command failed with error: %v\n", err)
 		}
+
 	case "upgrade":
 		if err := myaurhelper.Upgrade(); err != nil {
 			fmt.Printf("Upgrade command failed with error: %v\n", err)
 		}
+
 	case "install":
 		if err := myaurhelper.Install(); err != nil {
 			fmt.Printf("Install command failed with error: %v\n", err)
 		}
+
 	default:
 		fmt.Printf("Unknown command: %v\n", os.Args[1])
 	}
