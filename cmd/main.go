@@ -36,6 +36,11 @@ func main() {
 			fmt.Printf("Install command failed with error: %v\n", err)
 		}
 
+	case "remove":
+		if err := myaurhelper.Remove(); err != nil {
+			fmt.Printf("Remove command failed with error: %v\n", err)
+		}
+
 	default:
 		fmt.Printf("Unknown command: %v\n", os.Args[1])
 	}
