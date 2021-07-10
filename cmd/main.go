@@ -32,7 +32,7 @@ func main() {
 		}
 
 	case "install":
-		if err := myaurhelper.Install(); err != nil {
+		if err := myaurhelper.Install(os.Args[2:]); err != nil {
 			fmt.Printf("Install command failed with error: %v\n", err)
 		}
 
