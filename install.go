@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path/filepath"
 )
 
 func Install(pkgs []string) error {
@@ -28,28 +27,11 @@ func Install(pkgs []string) error {
 		// TODO: Display the PKGBUILD to the user using the $PAGER env var (or use less if not set)
 
 		// Run makepkg against the downloaded files
-		cmd = exec.Command("makepkg")
+		cmd = exec.Command("makepkg", "-si")
 		cmd.Dir = cloneDir
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
-		if err = cmd.Run(); err != nil {
-			return err
-		}
 
-		fmt.Println("makepkg command completed")
-
-		// Install .pkg.tar.zst using Pacman
-		matches, err := filepath.Glob(fmt.Sprintf("%s/*.pkg.tar.zst", cloneDir))
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("Installing archive for %v\n", pkg)
-		cmd = exec.Command("sudo", "pacman", "--noconfirm", "-U", matches[0]) // This hard coded index is not great -_-
-
-		// Connect the user's terminal stdout and stdin to the pacman process (this allows the user to enter a password for sudo)
-		cmd.Stdin = os.Stdin
-		cmd.Stdout = os.Stdout
+		// Connect console to makepkg process so that the user can provide their password for elevation and allow pacman to install
+		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
 		if err = cmd.Run(); err != nil {
 			return err
