@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func Install(pkgs []string) error {
@@ -24,7 +25,36 @@ func Install(pkgs []string) error {
 
 		fmt.Println("Downloaded AUR repo")
 
-		// TODO: Display the PKGBUILD to the user using the $PAGER env var (or use less if not set)
+		// Display the PKGBUILD to the user using the $PAGER env var (or manually display if not set)
+		if pagerBin, exists := os.LookupEnv("PAGER"); exists {
+			cmd = exec.Command(pagerBin, cloneDir+"/PKGBUILD")
+
+			// Connect console to makepkg process so that the user can provide their password for elevation and allow pacman to install
+			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+
+			if err = cmd.Run(); err != nil {
+				return err
+			}
+		} else {
+			fmt.Println("PAGER environment variable not set. Outputting directly to standard output.")
+
+			if b, err := os.ReadFile(cloneDir + "/PKGBUILD"); err == nil {
+				fmt.Println("---------- BEGIN FILE ----------")
+				fmt.Println(string(b))
+				fmt.Println("----------- END FILE -----------")
+			} else {
+				return err
+			}
+		}
+
+		fmt.Print("Continue the installation (y/N)? ")
+		var response string
+		fmt.Scanln(&response)
+
+		if strings.ToLower(response) != "y" {
+			fmt.Printf("Skipping installation of %v\n", pkg)
+			continue
+		}
 
 		// Run makepkg against the downloaded files
 		cmd = exec.Command("makepkg", "-si")
