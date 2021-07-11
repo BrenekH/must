@@ -10,11 +10,12 @@ import (
 func Install(pkgs []string) error {
 	for _, pkg := range pkgs {
 		// Download PKGBUILD and other files from the AUR
-		//! If the folder is already populated, git pull should be run instead of clone
 		home, err := os.UserHomeDir()
 		if err != nil {
 			return err
 		}
+
+		//! If the folder is already populated, error out or automatically use the update code instead
 
 		cloneDir := fmt.Sprintf("%s/.mah/%s", home, pkg)
 
