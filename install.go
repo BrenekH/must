@@ -52,6 +52,7 @@ func Install(ac AppConfig, pkgs []string) error {
 
 		if strings.ToLower(response) != "y" {
 			fmt.Printf("Skipping installation of %v\n", pkg)
+			// TODO: Remove cloned repository
 			continue
 		}
 
