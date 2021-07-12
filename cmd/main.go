@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	myaurhelper "github.com/BrenekH/my-aur-helper"
+	"github.com/BrenekH/my-aur-helper/jsonds"
 )
 
 func main() {
@@ -20,6 +21,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	jsonDS := jsonds.Create()
+	ac := myaurhelper.AppConfig{
+		DS: &jsonDS,
+	}
+
 	switch strings.ToLower(os.Args[1]) {
 	case "update":
 		if err := myaurhelper.Update(); err != nil {
@@ -32,7 +38,7 @@ func main() {
 		}
 
 	case "install":
-		if err := myaurhelper.Install(os.Args[2:]); err != nil {
+		if err := myaurhelper.Install(ac, os.Args[2:]); err != nil {
 			fmt.Printf("Install command failed with error: %v\n", err)
 		}
 

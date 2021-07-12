@@ -7,7 +7,7 @@ import (
 	"strings"
 )
 
-func Install(pkgs []string) error {
+func Install(ac AppConfig, pkgs []string) error {
 	for _, pkg := range pkgs {
 		// Download PKGBUILD and other files from the AUR
 		home, err := os.UserHomeDir()
@@ -65,6 +65,11 @@ func Install(pkgs []string) error {
 		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
 		if err = cmd.Run(); err != nil {
+			return err
+		}
+
+		p := Package{Name: pkg}
+		if err = ac.DS.AddKnownPackage(p); err != nil {
 			return err
 		}
 
