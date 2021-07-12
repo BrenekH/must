@@ -6,5 +6,6 @@ type AppConfig struct {
 }
 
 type Package struct {
-	Name string
+	Name            string `json:"name"`
+	UpdateAvailable bool   `json:"update_available"`
 }
