@@ -20,6 +20,7 @@ func Update(ac AppConfig) error {
 		// Run git pull in the package directory instead of the current working directory
 		cmd.Dir = pkgDir
 
+		fmt.Printf("Pulling %v\n", pkg.Name)
 		b, err := cmd.Output()
 		if err != nil {
 			return fmt.Errorf("git pull: %v", err)
@@ -34,6 +35,8 @@ func Update(ac AppConfig) error {
 			return fmt.Errorf("update database: %v", err)
 		}
 	}
+
+	fmt.Println("Update complete")
 
 	return nil
 }
