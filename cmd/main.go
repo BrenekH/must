@@ -40,12 +40,12 @@ func main() {
 
 	switch strings.ToLower(os.Args[1]) {
 	case "update":
-		if err := myaurhelper.Update(); err != nil {
+		if err := myaurhelper.Update(ac); err != nil {
 			fmt.Printf("Update command failed with error: %v\n", err)
 		}
 
 	case "upgrade":
-		if err := myaurhelper.Upgrade(); err != nil {
+		if err := myaurhelper.Upgrade(ac); err != nil {
 			fmt.Printf("Upgrade command failed with error: %v\n", err)
 		}
 
@@ -55,7 +55,7 @@ func main() {
 		}
 
 	case "remove":
-		if err := myaurhelper.Remove(); err != nil {
+		if err := myaurhelper.Remove(ac); err != nil {
 			fmt.Printf("Remove command failed with error: %v\n", err)
 		}
 
