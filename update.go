@@ -2,7 +2,6 @@ package myaurhelper
 
 import (
 	"fmt"
-	"os"
 	"os/exec"
 	"strings"
 )
@@ -17,9 +16,6 @@ func Update(ac AppConfig) error {
 		pkgDir := fmt.Sprintf("%v/%v", ac.AppDir, pkg.Name)
 
 		cmd := exec.Command("git", "pull")
-
-		// Connect user to git process so they know what is going on
-		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
 		// Run git pull in the package directory instead of the current working directory
 		cmd.Dir = pkgDir
