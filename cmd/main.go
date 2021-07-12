@@ -27,7 +27,12 @@ func main() {
 		os.Exit(1)
 	}
 
-	jsonDS := jsonds.Create(home + "/.mah/db.json")
+	jsonDS, err := jsonds.Create(home + "/.mah/db.json")
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
 	ac := myaurhelper.AppConfig{
 		DS:     &jsonDS,
 		AppDir: home + "/.mah",
