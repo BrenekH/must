@@ -10,17 +10,11 @@ import (
 func Install(ac AppConfig, pkgs []string) error {
 	for _, pkg := range pkgs {
 		// Download PKGBUILD and other files from the AUR
-		home, err := os.UserHomeDir()
-		if err != nil {
-			return err
-		}
-
+		cloneDir := fmt.Sprintf("%s/.mah/%s", ac.AppDir, pkg)
 		//! If the folder is already populated, error out or automatically use the update code instead
 
-		cloneDir := fmt.Sprintf("%s/.mah/%s", home, pkg)
-
 		cmd := exec.Command("git", "clone", fmt.Sprintf("https://aur.archlinux.org/%s.git", pkg), cloneDir)
-		if err = cmd.Run(); err != nil {
+		if err := cmd.Run(); err != nil {
 			return err
 		}
 
@@ -33,7 +27,7 @@ func Install(ac AppConfig, pkgs []string) error {
 			// Connect console to makepkg process so that the user can provide their password for elevation and allow pacman to install
 			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
-			if err = cmd.Run(); err != nil {
+			if err := cmd.Run(); err != nil {
 				return err
 			}
 		} else {
@@ -64,12 +58,12 @@ func Install(ac AppConfig, pkgs []string) error {
 		// Connect console to makepkg process so that the user can provide their password for elevation and allow pacman to install
 		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
-		if err = cmd.Run(); err != nil {
+		if err := cmd.Run(); err != nil {
 			return err
 		}
 
 		p := Package{Name: pkg}
-		if err = ac.DS.AddKnownPackage(p); err != nil {
+		if err := ac.DS.AddKnownPackage(p); err != nil {
 			return err
 		}
 

@@ -4,11 +4,14 @@ import (
 	mah "github.com/BrenekH/my-aur-helper"
 )
 
-func Create() JsonDS {
-	return JsonDS{}
+func Create(filepath string) JsonDS {
+	return JsonDS{
+		filepath: filepath,
+	}
 }
 
 type JsonDS struct {
+	filepath string
 }
 
 func (j *JsonDS) KnownPackages() ([]mah.Package, error) {

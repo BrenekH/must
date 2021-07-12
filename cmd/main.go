@@ -21,9 +21,16 @@ func main() {
 		os.Exit(1)
 	}
 
-	jsonDS := jsonds.Create()
+	home, err := os.UserHomeDir()
+	if err != nil {
+		fmt.Println("Error getting user home directory")
+		os.Exit(1)
+	}
+
+	jsonDS := jsonds.Create(home + "/.mah/db.json")
 	ac := myaurhelper.AppConfig{
-		DS: &jsonDS,
+		DS:     &jsonDS,
+		AppDir: home + "/.mah",
 	}
 
 	switch strings.ToLower(os.Args[1]) {
