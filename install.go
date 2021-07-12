@@ -10,12 +10,16 @@ import (
 func Install(ac AppConfig, pkgs []string) error {
 	for _, pkg := range pkgs {
 		// Download PKGBUILD and other files from the AUR
-		cloneDir := fmt.Sprintf("%s/.mah/%s", ac.AppDir, pkg)
+		cloneDir := fmt.Sprintf("%s/%s", ac.AppDir, pkg)
 		//! If the folder is already populated, error out or automatically use the update code instead
 
 		cmd := exec.Command("git", "clone", fmt.Sprintf("https://aur.archlinux.org/%s.git", pkg), cloneDir)
+
+		// Connect console to the git process so that the user can see any issues and provide any input it requires
+		cmd.Stdout, cmd.Stdin, cmd.Stderr = os.Stdout, os.Stdin, os.Stderr
+
 		if err := cmd.Run(); err != nil {
-			return err
+			return fmt.Errorf("git clone: %v", err)
 		}
 
 		fmt.Println("Downloaded AUR repo")
@@ -24,11 +28,11 @@ func Install(ac AppConfig, pkgs []string) error {
 		if pagerBin, exists := os.LookupEnv("PAGER"); exists {
 			cmd = exec.Command(pagerBin, cloneDir+"/PKGBUILD")
 
-			// Connect console to makepkg process so that the user can provide their password for elevation and allow pacman to install
+			// Connect console to the pager process so that the user interact with it properly
 			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
 			if err := cmd.Run(); err != nil {
-				return err
+				return fmt.Errorf("pager: %v", err)
 			}
 		} else {
 			fmt.Println("PAGER environment variable not set. Outputting directly to standard output.")
@@ -38,7 +42,7 @@ func Install(ac AppConfig, pkgs []string) error {
 				fmt.Println(string(b))
 				fmt.Println("----------- END FILE -----------")
 			} else {
-				return err
+				return fmt.Errorf("reading PKGBUILD: %v", err)
 			}
 		}
 
@@ -59,12 +63,12 @@ func Install(ac AppConfig, pkgs []string) error {
 		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
 		if err := cmd.Run(); err != nil {
-			return err
+			return fmt.Errorf("makepkg: %v", err)
 		}
 
-		p := Package{Name: pkg}
+		p := Package{Name: pkg, UpdateAvailable: false}
 		if err := ac.DS.AddKnownPackage(p); err != nil {
-			return err
+			return fmt.Errorf("storing in database: %v", err)
 		}
 
 		fmt.Printf("Package %v installed\n", pkg)
