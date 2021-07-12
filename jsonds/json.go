@@ -2,6 +2,7 @@ package jsonds
 
 import (
 	"encoding/json"
+	"fmt"
 	"os"
 
 	mah "github.com/BrenekH/my-aur-helper"
@@ -35,6 +36,23 @@ func (j *JsonDS) KnownPackages() ([]mah.Package, error) {
 
 func (j *JsonDS) AddKnownPackage(p mah.Package) error {
 	j.knownPackages = append(j.knownPackages, p)
+	return j.Save()
+}
+
+func (j *JsonDS) UpdatePackage(p mah.Package) error {
+	var pkgFound bool
+	for i := 0; i < len(j.knownPackages); i++ {
+		if j.knownPackages[i].Name == p.Name {
+			j.knownPackages[i] = p
+			pkgFound = true
+			break
+		}
+	}
+
+	if !pkgFound {
+		return fmt.Errorf("unable to find package %v in database", p.Name)
+	}
+
 	return j.Save()
 }
 
