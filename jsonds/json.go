@@ -56,6 +56,16 @@ func (j *JsonDS) UpdatePackage(p mah.Package) error {
 	return j.Save()
 }
 
+func (j *JsonDS) RemovePackage(pname string) error {
+	for i := 0; i < len(j.knownPackages); i++ {
+		if pname == j.knownPackages[i].Name {
+			j.knownPackages = removeFromSlice(j.knownPackages, i)
+			break
+		}
+	}
+	return j.Save()
+}
+
 func (j *JsonDS) Load() error {
 	// Read file
 	b, err := os.ReadFile(j.filepath)
@@ -89,4 +99,10 @@ func (j *JsonDS) Save() error {
 
 type jsonStruct struct {
 	Packages []mah.Package `json:"packages"`
+}
+
+// removeFromSlice uses an index to remove an element from a slice. Source: https://stackoverflow.com/a/37335777
+func removeFromSlice(s []mah.Package, i int) []mah.Package {
+	s[i] = s[len(s)-1]
+	return s[:len(s)-1]
 }

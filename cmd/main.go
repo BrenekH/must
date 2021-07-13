@@ -55,7 +55,7 @@ func main() {
 		}
 
 	case "remove":
-		if err := myaurhelper.Remove(ac); err != nil {
+		if err := myaurhelper.Remove(ac, os.Args[2:]); err != nil {
 			fmt.Printf("Remove command failed with error: %v\n", err)
 		}
 
