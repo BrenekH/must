@@ -27,12 +27,12 @@ func Remove(ac AppConfig, toRemove []string) error {
 		}
 
 		// Remove package using Pacman (pacman -Rns)
-		cmd := exec.Command("sudo", "pacman", "-Rns")
+		cmd := exec.Command("sudo", "pacman", "-Rns", pkgName)
 
 		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
 		if err = cmd.Run(); err != nil {
-			return err
+			return fmt.Errorf("pacman -Rns: %v", err)
 		}
 
 		// Remove downloaded AUR repo
