@@ -1,3 +1,7 @@
+# makepkg leftovers
+my-aur-helper-git/
+*.pkg.tar.zst
+
 ### Go ###
 # Binaries for programs and plugins
 *.exe
