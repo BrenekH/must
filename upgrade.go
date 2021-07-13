@@ -19,11 +19,34 @@ func Upgrade(ac AppConfig) error {
 
 		fmt.Printf("Upgrading %v\n", pkg.Name)
 
-		// TODO: Show git diff of PKGBUILD
+		pkgDir := ac.AppDir + "/" + pkg.Name
+
+		// Display the git diff of PKGBUILD to the user using the $PAGER env var (or manually display if not set)
+		if pagerBin, exists := os.LookupEnv("PAGER"); exists {
+			cmd := exec.Command("git", "diff", "HEAD~1", "PKGBUILD", "|", pagerBin)
+
+			// Connect console to the pager process so that the user interact with it properly
+			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+
+			if err := cmd.Run(); err != nil {
+				return fmt.Errorf("git diff into $PAGER: %v", err)
+			}
+		} else {
+			fmt.Println("PAGER environment variable not set. Outputting directly to standard output.")
+
+			cmd := exec.Command("git", "diff", "HEAD~1", "PKGBUILD")
+
+			// Connect console to the git process so that it natively displays
+			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+
+			if err := cmd.Run(); err != nil {
+				return fmt.Errorf("git diff: %v", err)
+			}
+		}
 
 		cmd := exec.Command("makepkg", "-si")
 		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
-		cmd.Dir = ac.AppDir + "/" + pkg.Name
+		cmd.Dir = pkgDir
 
 		if err = cmd.Run(); err != nil {
 			return fmt.Errorf("makepkg: %v", err)
