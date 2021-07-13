@@ -27,7 +27,7 @@ func Update(ac AppConfig) error {
 		}
 
 		if strings.TrimSpace(string(b)) == "Already up to date." {
-			return nil
+			continue
 		}
 
 		pkg.UpdateAvailable = true
@@ -37,6 +37,26 @@ func Update(ac AppConfig) error {
 	}
 
 	fmt.Println("Update complete")
+
+	return outputNumPkgsNeedingUpgrade(ac)
+}
+
+func outputNumPkgsNeedingUpgrade(ac AppConfig) error {
+	pkgs, err := ac.DS.KnownPackages()
+	if err != nil {
+		return err
+	}
+
+	numPkgs := 0
+	for _, pkg := range pkgs {
+		if pkg.UpdateAvailable {
+			numPkgs++
+		}
+	}
+
+	if numPkgs != 0 {
+		fmt.Printf("There are %v packages available to upgrade\n", numPkgs)
+	}
 
 	return nil
 }
