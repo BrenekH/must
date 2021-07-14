@@ -7,6 +7,7 @@ import (
 
 	"github.com/BrenekH/must"
 	"github.com/BrenekH/must/jsonds"
+	"github.com/spf13/pflag"
 )
 
 var Version = "dev"
@@ -16,6 +17,12 @@ func main() {
 		fmt.Println("expected at least 2 arguments")
 		os.Exit(1)
 	}
+
+	// Create flag sets for commands
+	updateFlagSet := pflag.NewFlagSet("update", pflag.ExitOnError)
+	upgradeFlagSet := pflag.NewFlagSet("upgrade", pflag.ExitOnError)
+	installFlagSet := pflag.NewFlagSet("install", pflag.ExitOnError)
+	removeFlagSet := pflag.NewFlagSet("remove", pflag.ExitOnError)
 
 	home, err := os.UserHomeDir()
 	if err != nil {
@@ -41,39 +48,50 @@ func main() {
 	}
 
 	switch strings.ToLower(os.Args[1]) {
-	case "--help", "-h":
-		displayHelpMessage()
-
-	case "--version", "-v":
-		fmt.Printf("Must v%v\n", Version)
-
 	case "update":
+		updateFlagSet.Parse(os.Args[2:])
 		if err := must.Update(ac); err != nil {
 			fmt.Printf("Update command failed with error: %v\n", err)
 		}
 
 	case "upgrade":
+		upgradeFlagSet.Parse(os.Args[2:])
 		if err := must.Upgrade(ac); err != nil {
 			fmt.Printf("Upgrade command failed with error: %v\n", err)
 		}
 
 	case "install":
+		installFlagSet.Parse(os.Args[2:])
 		if err := must.Install(ac, os.Args[2:]); err != nil {
 			fmt.Printf("Install command failed with error: %v\n", err)
 		}
 
 	case "remove":
+		removeFlagSet.Parse(os.Args[2:])
 		if err := must.Remove(ac, os.Args[2:]); err != nil {
 			fmt.Printf("Remove command failed with error: %v\n", err)
 		}
 
 	default:
-		fmt.Printf("Unknown command: %v\n", os.Args[1])
+		displayVer := pflag.BoolP("version", "v", false, "Show version")
+		displayHelp := pflag.BoolP("help", "h", false, "Show this message")
+
+		pflag.Parse()
+
+		if *displayHelp {
+			displayHelpMessage()
+			break
+		}
+
+		if *displayVer {
+			fmt.Printf("Must %v\n", Version)
+			break
+		}
 	}
 }
 
 func displayHelpMessage() {
-	fmt.Printf(`Must v%v Help
+	fmt.Printf(`Must %v Help
 
 --help, -h    - Show this message
 --version, -v - Show the application version
