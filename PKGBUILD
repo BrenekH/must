@@ -33,13 +33,15 @@ build() {
 	export CGO_LDFLAGS="${LDFLAGS}"
 	export GOFLAGS="-buildmode=pie -trimpath -ldflags=-linkmode=external -mod=readonly -modcacherw"
 
-	go build -o must ./cmd/main.go
+	go build -o must -ldflags="-X 'main.Version=local-$pkgver'" ./cmd/main.go
 }
 
 check() {
 	cd "$pkgname"
 
 	go test ./...
+
+	./must --version
 }
 
 package() {

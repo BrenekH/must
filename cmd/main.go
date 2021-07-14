@@ -9,6 +9,8 @@ import (
 	"github.com/BrenekH/must/jsonds"
 )
 
+var Version = "dev"
+
 func main() {
 	if len(os.Args) < 2 {
 		fmt.Println("expected at least 2 arguments")
@@ -39,6 +41,12 @@ func main() {
 	}
 
 	switch strings.ToLower(os.Args[1]) {
+	case "--help", "-h":
+		displayHelpMessage()
+
+	case "--version", "-v":
+		fmt.Printf("Must v%v\n", Version)
+
 	case "update":
 		if err := must.Update(ac); err != nil {
 			fmt.Printf("Update command failed with error: %v\n", err)
@@ -62,4 +70,19 @@ func main() {
 	default:
 		fmt.Printf("Unknown command: %v\n", os.Args[1])
 	}
+}
+
+func displayHelpMessage() {
+	fmt.Printf(`Must v%v Help
+
+--help, -h    - Show this message
+--version, -v - Show the application version
+
+Commands:
+    update                        - Pull the underlying git repos and check if any have new upgrades available.
+    upgrade                       - Based on the results of update, upgrade any packages which are known to have new versions.
+    install <packages to install> - Download and install each package in a space-delimited list of packages available in the AUR.
+    remove <packages to remove>   - Uninstall and remove the build files for a space-delimited list of packages that were installed my Must.
+`, Version)
+	fmt.Println("") // Print an empty string to append a newline (the backtick style of strings doesn't allow for escape chars like '\n')
 }
