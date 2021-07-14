@@ -10,12 +10,6 @@ import (
 )
 
 func main() {
-	// Commands
-	//   - update - Refresh known package versions
-	//   - upgrade - Upgrade packages
-	//   - install - Install new packages
-	//   - remove - Uninstall specified packages
-
 	if len(os.Args) < 2 {
 		fmt.Println("expected at least 2 arguments")
 		os.Exit(1)
@@ -23,7 +17,13 @@ func main() {
 
 	home, err := os.UserHomeDir()
 	if err != nil {
-		fmt.Println("Error getting user home directory")
+		fmt.Printf("Error getting user home directory: %v\n", err)
+		os.Exit(1)
+	}
+
+	// Ensure ~/.must exists
+	if err = os.MkdirAll(home+"/.must", 0644); err != nil {
+		fmt.Printf("Error creating ~/.must: %v\n", err)
 		os.Exit(1)
 	}
 
