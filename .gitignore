@@ -1,5 +1,5 @@
 # makepkg leftovers
-must-git/
+must-local/
 *.pkg.tar.zst
 
 ### Go ###
