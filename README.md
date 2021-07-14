@@ -48,7 +48,7 @@ Finally install using makepkg.
 makepkg -sci
 ```
 
-> Note: If you're unfamiliar with makepkg, -sci will install required dependencies, clean up after itself and install the package when it is finished packaging.
+> Note: If you're unfamiliar with makepkg, "-sci" will install any required dependencies, clean up after itself and install the package when it is finished packaging using pacman -U.
 
 ## Why did I even make this?
 
