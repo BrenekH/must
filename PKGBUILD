@@ -1,14 +1,14 @@
 # Maintainer: Brenek Harrison <brenekharrison @ gmail d0t com>
 pkgname=must-local
-pkgver=0.0.1
+pkgver="$(git rev-parse --short HEAD)"
 pkgrel=1
 epoch=
-pkgdesc="Hobby AUR helper with apt-like syntax"
+pkgdesc="Hobbyist AUR helper with apt-like syntax"
 arch=("x86_64" "aarch64")
 url="https://github.com/BrenekH/must#readme"
 license=("GPL")
 groups=()
-depends=("glibc")
+depends=("glibc" "git")
 makedepends=("go" "git")
 checkdepends=()
 optdepends=()
