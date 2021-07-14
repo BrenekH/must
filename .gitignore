@@ -1,5 +1,5 @@
 # makepkg leftovers
-my-aur-helper-git/
+must-git/
 *.pkg.tar.zst
 
 ### Go ###

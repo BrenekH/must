@@ -1,4 +1,4 @@
-package myaurhelper
+package must
 
 import (
 	"fmt"

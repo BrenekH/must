@@ -5,8 +5,8 @@ import (
 	"os"
 	"strings"
 
-	myaurhelper "github.com/BrenekH/my-aur-helper"
-	"github.com/BrenekH/my-aur-helper/jsonds"
+	"github.com/BrenekH/must"
+	"github.com/BrenekH/must/jsonds"
 )
 
 func main() {
@@ -27,35 +27,35 @@ func main() {
 		os.Exit(1)
 	}
 
-	jsonDS, err := jsonds.Create(home + "/.mah/db.json")
+	jsonDS, err := jsonds.Create(home + "/.must/db.json")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	ac := myaurhelper.AppConfig{
+	ac := must.AppConfig{
 		DS:     &jsonDS,
-		AppDir: home + "/.mah",
+		AppDir: home + "/.must",
 	}
 
 	switch strings.ToLower(os.Args[1]) {
 	case "update":
-		if err := myaurhelper.Update(ac); err != nil {
+		if err := must.Update(ac); err != nil {
 			fmt.Printf("Update command failed with error: %v\n", err)
 		}
 
 	case "upgrade":
-		if err := myaurhelper.Upgrade(ac); err != nil {
+		if err := must.Upgrade(ac); err != nil {
 			fmt.Printf("Upgrade command failed with error: %v\n", err)
 		}
 
 	case "install":
-		if err := myaurhelper.Install(ac, os.Args[2:]); err != nil {
+		if err := must.Install(ac, os.Args[2:]); err != nil {
 			fmt.Printf("Install command failed with error: %v\n", err)
 		}
 
 	case "remove":
-		if err := myaurhelper.Remove(ac, os.Args[2:]); err != nil {
+		if err := must.Remove(ac, os.Args[2:]); err != nil {
 			fmt.Printf("Remove command failed with error: %v\n", err)
 		}
 

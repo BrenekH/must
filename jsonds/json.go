@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 
-	mah "github.com/BrenekH/my-aur-helper"
+	"github.com/BrenekH/must"
 )
 
 func Create(filepath string) (JsonDS, error) {
@@ -27,19 +27,19 @@ func Create(filepath string) (JsonDS, error) {
 
 type JsonDS struct {
 	filepath      string
-	knownPackages []mah.Package
+	knownPackages []must.Package
 }
 
-func (j *JsonDS) KnownPackages() ([]mah.Package, error) {
+func (j *JsonDS) KnownPackages() ([]must.Package, error) {
 	return j.knownPackages, nil
 }
 
-func (j *JsonDS) AddKnownPackage(p mah.Package) error {
+func (j *JsonDS) AddKnownPackage(p must.Package) error {
 	j.knownPackages = append(j.knownPackages, p)
 	return j.Save()
 }
 
-func (j *JsonDS) UpdatePackage(p mah.Package) error {
+func (j *JsonDS) UpdatePackage(p must.Package) error {
 	var pkgFound bool
 	for i := 0; i < len(j.knownPackages); i++ {
 		if j.knownPackages[i].Name == p.Name {
@@ -98,11 +98,11 @@ func (j *JsonDS) Save() error {
 }
 
 type jsonStruct struct {
-	Packages []mah.Package `json:"packages"`
+	Packages []must.Package `json:"packages"`
 }
 
 // removeFromSlice uses an index to remove an element from a slice. Source: https://stackoverflow.com/a/37335777
-func removeFromSlice(s []mah.Package, i int) []mah.Package {
+func removeFromSlice(s []must.Package, i int) []must.Package {
 	s[i] = s[len(s)-1]
 	return s[:len(s)-1]
 }

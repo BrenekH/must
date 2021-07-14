@@ -1,4 +1,4 @@
-package myaurhelper
+package must
 
 import (
 	"fmt"
@@ -13,17 +13,17 @@ func Remove(ac AppConfig, toRemove []string) error {
 	}
 
 	for _, pkgName := range toRemove {
-		// Check that the package was installed using mah.
-		var installedByMah bool
+		// Check that the package was installed using must.
+		var installedByMust bool
 		for _, kPkg := range knownPkgs {
 			if pkgName == kPkg.Name {
-				installedByMah = true
+				installedByMust = true
 				break
 			}
 		}
 
-		if !installedByMah {
-			return fmt.Errorf("%v was not installed using mah install", pkgName)
+		if !installedByMust {
+			return fmt.Errorf("%v was not installed using must install", pkgName)
 		}
 
 		// Remove package using Pacman (pacman -Rns)

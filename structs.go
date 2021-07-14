@@ -1,4 +1,4 @@
-package myaurhelper
+package must
 
 type AppConfig struct {
 	DS     DataStorer

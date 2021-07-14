@@ -1,4 +1,4 @@
-package myaurhelper
+package must
 
 type DataStorer interface {
 	AddKnownPackage(Package) error
