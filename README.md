@@ -1,6 +1,6 @@
 # Must
 
-Hobbyist AUR helper with apt-like syntax
+AUR helper with apt-like syntax
 
 ## Usage
 
