@@ -49,6 +49,11 @@ func Upgrade(ac AppConfig) error {
 			return fmt.Errorf("makepkg: %v", err)
 		}
 
+		pkg.UpdateAvailable = false
+		if err = ac.DS.UpdatePackage(pkg); err != nil {
+			return fmt.Errorf("mark update as complete: %v", err)
+		}
+
 		fmt.Printf("%v upgraded\n", pkg.Name)
 	}
 
