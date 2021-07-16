@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strings"
 )
 
 func Upgrade(ac AppConfig) error {
@@ -21,30 +22,26 @@ func Upgrade(ac AppConfig) error {
 
 		pkgDir := ac.AppDir + "/" + pkg.Name
 
-		// Display the git diff of PKGBUILD to the user using the $PAGER env var (or manually display if not set)
-		if pagerBin, exists := os.LookupEnv("PAGER"); exists {
-			cmd := exec.Command("git", "diff", "HEAD~1", "PKGBUILD", "|", pagerBin)
+		cmd := exec.Command("git", "diff", "HEAD~1", "PKGBUILD")
+		cmd.Dir = pkgDir
 
-			// Connect console to the pager process so that the user interact with it properly
-			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+		// Connect console to the git process so that it natively displays
+		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 
-			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("git diff into $PAGER: %v", err)
-			}
-		} else {
-			fmt.Println("PAGER environment variable not set. Outputting directly to standard output.")
-
-			cmd := exec.Command("git", "diff", "HEAD~1", "PKGBUILD")
-
-			// Connect console to the git process so that it natively displays
-			cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
-
-			if err := cmd.Run(); err != nil {
-				return fmt.Errorf("git diff: %v", err)
-			}
+		if err := cmd.Run(); err != nil {
+			return fmt.Errorf("git diff: %v", err)
 		}
 
-		cmd := exec.Command("makepkg", "-si")
+		fmt.Print("Continue the upgrade (y/N)? ")
+		var response string
+		fmt.Scanln(&response)
+
+		if strings.ToLower(response) != "y" {
+			fmt.Printf("Skipping upgrade of %v\n", pkg)
+			continue
+		}
+
+		cmd = exec.Command("makepkg", "-si")
 		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
 		cmd.Dir = pkgDir
 
