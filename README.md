@@ -66,5 +66,6 @@ Plus, I'm one of those crazy guys who likes to create their own tools rather tha
 This project is licensed under the GNU Public License version 3, a copy of which can found in the [LICENSE file](https://github.com/BrenekH/must/tree/master/LICENSE).
 
 <!-- markdownlint-disable-next-line -->
-<a name="pacman-pref-note"></a>\* Pacman is a very powerful and versatile tool, thanks in part to the single-letter commands, but that doesn't mean that I have to like it.
-Everyone has a right to like what they want so I can't fault anyone for preferring Pacman syntax over other package managers'.
+<a name="pacman-pref-note"></a>\* Pacman is a very powerful and versatile tool, thanks in part to the single-letter commands.
+However, everyone has a right to like what they want, so while I prefer the subcommand structure of apt, I can't fault anyone for preferring the Pacman syntax.
+This project is just not for them.
