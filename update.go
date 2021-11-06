@@ -3,7 +3,9 @@ package must
 import (
 	"fmt"
 	"os/exec"
-	"strings"
+	"regexp"
+
+	"github.com/mikkeloscar/aur"
 )
 
 func Update(ac AppConfig) error {
@@ -12,27 +14,43 @@ func Update(ac AppConfig) error {
 		return err
 	}
 
+	pkgsToFind := make([]string, 0)
 	for _, pkg := range pkgs {
-		pkgDir := fmt.Sprintf("%v/%v", ac.AppDir, pkg.Name)
+		pkgsToFind = append(pkgsToFind, pkg.Name)
+	}
 
-		cmd := exec.Command("git", "pull")
+	results, err := aur.Info(pkgsToFind)
+	if err != nil {
+		return err
+	}
 
-		// Run git pull in the package directory instead of the current working directory
-		cmd.Dir = pkgDir
-
-		fmt.Printf("Pulling %v\n", pkg.Name)
+	for _, result := range results {
+		cmd := exec.Command("pacman", "-Qi", result.Name)
 		b, err := cmd.Output()
 		if err != nil {
-			return fmt.Errorf("git pull: %v", err)
+			return err
 		}
 
-		if strings.TrimSpace(string(b)) == "Already up to date." {
+		var re = regexp.MustCompile(`Version *: (.+)`)
+		regexResult := re.FindStringSubmatch(string(b))
+
+		if len(regexResult) < 2 {
+			return fmt.Errorf("failed to parse version for package '%v' from pacman", result.Name)
+		}
+
+		currentPkgVersion := regexResult[1]
+
+		if currentPkgVersion == result.Version { // TODO: Change this to mimic vercmp(8)'s functionality instead of a blind equality check
 			continue
 		}
 
-		pkg.UpdateAvailable = true
-		if err = ac.DS.UpdatePackage(pkg); err != nil {
-			return fmt.Errorf("update database: %v", err)
+		for _, pkg := range pkgs {
+			if pkg.Name == result.Name {
+				pkg.UpdateAvailable = true
+				if err = ac.DS.UpdatePackage(pkg); err != nil {
+					return fmt.Errorf("update database: %v", err)
+				}
+			}
 		}
 	}
 

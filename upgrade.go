@@ -19,16 +19,24 @@ func Upgrade(ac AppConfig) error {
 		}
 
 		fmt.Printf("Upgrading %v\n", pkg.Name)
-
 		pkgDir := ac.AppDir + "/" + pkg.Name
 
-		cmd := exec.Command("git", "diff", "HEAD~1", "PKGBUILD")
-		cmd.Dir = pkgDir
+		// Run git pull in the package directory instead of the current working directory
+		gitPullCMD := exec.Command("git", "pull")
+		gitPullCMD.Dir = pkgDir
+
+		// fmt.Printf("Pulling %v\n", pkg.Name)
+		if err := gitPullCMD.Run(); err != nil {
+			return fmt.Errorf("git pull: %v", err)
+		}
+
+		gitDiffCMD := exec.Command("git", "diff", "HEAD~1", "PKGBUILD")
+		gitDiffCMD.Dir = pkgDir
 
 		// Connect console to the git process so that it natively displays
-		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
+		gitDiffCMD.Stdin, gitDiffCMD.Stdout, gitDiffCMD.Stderr = os.Stdin, os.Stdout, os.Stderr
 
-		if err := cmd.Run(); err != nil {
+		if err := gitDiffCMD.Run(); err != nil {
 			return fmt.Errorf("git diff: %v", err)
 		}
 
@@ -41,11 +49,11 @@ func Upgrade(ac AppConfig) error {
 			continue
 		}
 
-		cmd = exec.Command("makepkg", "-si")
-		cmd.Stdin, cmd.Stdout, cmd.Stderr = os.Stdin, os.Stdout, os.Stderr
-		cmd.Dir = pkgDir
+		gitDiffCMD = exec.Command("makepkg", "-si")
+		gitDiffCMD.Stdin, gitDiffCMD.Stdout, gitDiffCMD.Stderr = os.Stdin, os.Stdout, os.Stderr
+		gitDiffCMD.Dir = pkgDir
 
-		if err = cmd.Run(); err != nil {
+		if err = gitDiffCMD.Run(); err != nil {
 			return fmt.Errorf("makepkg: %v", err)
 		}
 
