@@ -2,6 +2,8 @@ package must
 
 import (
 	"fmt"
+	"os/exec"
+	"regexp"
 
 	"github.com/mikkeloscar/aur"
 )
@@ -23,9 +25,33 @@ func Update(ac AppConfig) error {
 	}
 
 	for _, result := range results {
-		_ = result
-		// TODO: Query current version from database
-		// TODO: Update db with update available flag if db version is less than current version
+		cmd := exec.Command("pacman", "-Qi", result.Name)
+		b, err := cmd.Output()
+		if err != nil {
+			return err
+		}
+
+		var re = regexp.MustCompile(`Version *: (.+)`)
+		regexResult := re.FindStringSubmatch(string(b))
+
+		if len(regexResult) < 2 {
+			return fmt.Errorf("failed to parse version for package '%v' from pacman", result.Name)
+		}
+
+		currentPkgVersion := regexResult[1]
+
+		if currentPkgVersion == result.Version { // TODO: Change this to mimic vercmp(8)'s functionality instead of a blind equality check
+			continue
+		}
+
+		for _, pkg := range pkgs {
+			if pkg.Name == result.Name {
+				pkg.UpdateAvailable = true
+				if err = ac.DS.UpdatePackage(pkg); err != nil {
+					return fmt.Errorf("update database: %v", err)
+				}
+			}
+		}
 	}
 
 	fmt.Println("Update complete")
