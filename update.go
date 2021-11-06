@@ -2,6 +2,8 @@ package must
 
 import (
 	"fmt"
+
+	"github.com/mikkeloscar/aur"
 )
 
 func Update(ac AppConfig) error {
@@ -10,14 +12,20 @@ func Update(ac AppConfig) error {
 		return err
 	}
 
+	pkgsToFind := make([]string, 0)
 	for _, pkg := range pkgs {
-		pkgDir := fmt.Sprintf("%v/%v", ac.AppDir, pkg.Name)
-		_ = pkgDir
+		pkgsToFind = append(pkgsToFind, pkg.Name)
+	}
 
-		pkg.UpdateAvailable = true
-		if err = ac.DS.UpdatePackage(pkg); err != nil {
-			return fmt.Errorf("update database: %v", err)
-		}
+	results, err := aur.Info(pkgsToFind)
+	if err != nil {
+		return err
+	}
+
+	for _, result := range results {
+		_ = result
+		// TODO: Query current version from database
+		// TODO: Update db with update available flag if db version is less than current version
 	}
 
 	fmt.Println("Update complete")
