@@ -22,7 +22,7 @@ func Install(ac AppConfig, pkgs []string) error {
 			return fmt.Errorf("git clone: %v", err)
 		}
 
-		fmt.Println("Downloaded AUR repo")
+		fmt.Println("[must] Downloaded AUR repo")
 
 		// Display the PKGBUILD to the user using the $PAGER env var (or manually display if not set)
 		if pagerBin, exists := os.LookupEnv("PAGER"); exists {
@@ -35,7 +35,7 @@ func Install(ac AppConfig, pkgs []string) error {
 				return fmt.Errorf("pager: %v", err)
 			}
 		} else {
-			fmt.Println("PAGER environment variable not set. Outputting directly to standard output.")
+			fmt.Println("[must] PAGER environment variable not set. Outputting directly to standard output.")
 
 			if b, err := os.ReadFile(cloneDir + "/PKGBUILD"); err == nil {
 				fmt.Println("---------- BEGIN FILE ----------")
@@ -51,7 +51,7 @@ func Install(ac AppConfig, pkgs []string) error {
 		fmt.Scanln(&response)
 
 		if strings.ToLower(response) != "y" {
-			fmt.Printf("Skipping installation of %v\n", pkg)
+			fmt.Printf("[must] Skipping installation of %v\n", pkg)
 			// TODO: Remove cloned repository
 			continue
 		}
@@ -72,7 +72,7 @@ func Install(ac AppConfig, pkgs []string) error {
 			return fmt.Errorf("storing in database: %v", err)
 		}
 
-		fmt.Printf("Package %v installed\n", pkg)
+		fmt.Printf("[must] Package %v installed\n", pkg)
 	}
 
 	return nil

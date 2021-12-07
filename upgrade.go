@@ -18,14 +18,14 @@ func Upgrade(ac AppConfig) error {
 			continue
 		}
 
-		fmt.Printf("Upgrading %v\n", pkg.Name)
+		fmt.Printf("[must] Upgrading %v\n", pkg.Name)
 		pkgDir := ac.AppDir + "/" + pkg.Name
 
 		// Run git pull in the package directory instead of the current working directory
 		gitPullCMD := exec.Command("git", "pull")
 		gitPullCMD.Dir = pkgDir
 
-		// fmt.Printf("Pulling %v\n", pkg.Name)
+		// fmt.Printf("[must] Pulling %v\n", pkg.Name)
 		if err := gitPullCMD.Run(); err != nil {
 			return fmt.Errorf("git pull: %v", err)
 		}
@@ -45,7 +45,7 @@ func Upgrade(ac AppConfig) error {
 		fmt.Scanln(&response)
 
 		if strings.ToLower(response) != "y" {
-			fmt.Printf("Skipping upgrade of %v\n", pkg)
+			fmt.Printf("[must] Skipping upgrade of %v\n", pkg)
 			continue
 		}
 
@@ -62,7 +62,7 @@ func Upgrade(ac AppConfig) error {
 			return fmt.Errorf("mark update as complete: %v", err)
 		}
 
-		fmt.Printf("%v upgraded\n", pkg.Name)
+		fmt.Printf("[must] %v upgraded\n", pkg.Name)
 	}
 
 	return nil

@@ -14,7 +14,7 @@ var Version = "dev"
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("expected at least 2 arguments")
+		fmt.Println("[must] expected at least 2 arguments")
 		os.Exit(1)
 	}
 
@@ -26,13 +26,13 @@ func main() {
 
 	home, err := os.UserHomeDir()
 	if err != nil {
-		fmt.Printf("Error getting user home directory: %v\n", err)
+		fmt.Printf("[must] Error getting user home directory: %v\n", err)
 		os.Exit(1)
 	}
 
 	// Ensure ~/.must exists
 	if err = os.MkdirAll(home+"/.must", 0644); err != nil {
-		fmt.Printf("Error creating ~/.must: %v\n", err)
+		fmt.Printf("[must] Error creating ~/.must: %v\n", err)
 		os.Exit(1)
 	}
 
@@ -51,25 +51,25 @@ func main() {
 	case "update":
 		updateFlagSet.Parse(os.Args[2:])
 		if err := must.Update(ac); err != nil {
-			fmt.Printf("Update command failed with error: %v\n", err)
+			fmt.Printf("[must] Update command failed with error: %v\n", err)
 		}
 
 	case "upgrade":
 		upgradeFlagSet.Parse(os.Args[2:])
 		if err := must.Upgrade(ac); err != nil {
-			fmt.Printf("Upgrade command failed with error: %v\n", err)
+			fmt.Printf("[must] Upgrade command failed with error: %v\n", err)
 		}
 
 	case "install":
 		installFlagSet.Parse(os.Args[2:])
 		if err := must.Install(ac, os.Args[2:]); err != nil {
-			fmt.Printf("Install command failed with error: %v\n", err)
+			fmt.Printf("[must] Install command failed with error: %v\n", err)
 		}
 
 	case "remove":
 		removeFlagSet.Parse(os.Args[2:])
 		if err := must.Remove(ac, os.Args[2:]); err != nil {
-			fmt.Printf("Remove command failed with error: %v\n", err)
+			fmt.Printf("[must] Remove command failed with error: %v\n", err)
 		}
 
 	default:

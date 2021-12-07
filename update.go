@@ -54,7 +54,7 @@ func Update(ac AppConfig) error {
 		}
 	}
 
-	fmt.Println("Update complete")
+	fmt.Println("[must] Update complete")
 
 	return outputNumPkgsNeedingUpgrade(ac)
 }
@@ -73,7 +73,7 @@ func outputNumPkgsNeedingUpgrade(ac AppConfig) error {
 	}
 
 	if numPkgs != 0 {
-		fmt.Printf("There are %v packages available to upgrade\n", numPkgs)
+		fmt.Printf("[must] There are %v packages available to upgrade\n", numPkgs)
 	}
 
 	return nil
