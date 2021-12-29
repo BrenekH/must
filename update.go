@@ -2,8 +2,10 @@ package must
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"regexp"
+	"strings"
 
 	"github.com/mikkeloscar/aur"
 )
@@ -40,7 +42,7 @@ func Update(ac AppConfig) error {
 
 		currentPkgVersion := regexResult[1]
 
-		if currentPkgVersion == result.Version { // TODO: Change this to mimic vercmp(8)'s functionality instead of a blind equality check
+		if !isPackageUpgradeable(currentPkgVersion, result.Version) {
 			continue
 		}
 
@@ -77,4 +79,23 @@ func outputNumPkgsNeedingUpgrade(ac AppConfig) error {
 	}
 
 	return nil
+}
+
+func isPackageUpgradeable(currentVersion, latestVersion string) bool {
+	cmd := exec.Command("vercmp", currentVersion, latestVersion)
+	b, err := cmd.Output()
+	if err != nil {
+		fmt.Println("[must] Could not call vercmp. Please check that the Pacman is properly installed.")
+		os.Exit(1)
+	}
+
+	switch strings.TrimSpace(string(b)) {
+	case "0", "1":
+		return false
+	case "-1":
+		return true
+	default:
+		fmt.Printf("[must] Received an unknown vercmp value %v\n", strings.TrimSpace(string(b)))
+		return false
+	}
 }
