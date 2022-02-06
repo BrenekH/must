@@ -1,3 +1,5 @@
+> This repository is archived and no longer being maintained.
+
 # Must
 
 AUR helper with apt-like syntax
